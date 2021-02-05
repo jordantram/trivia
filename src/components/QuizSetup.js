@@ -1,11 +1,11 @@
 import React from 'react';
 
-const ModeSelect = () => {
+const QuizSetup = () => {
   return (
     <div>
-      Mode Select
+      Quiz Setup
     </div>
   );
 };
 
-export default ModeSelect;
+export default QuizSetup;
