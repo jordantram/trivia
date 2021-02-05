@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
-import ModeSelect from './components/ModeSelect.js';
-import QuizSetup from './components/QuizSetup.js';
-import QuestionCard from './components/QuestionCard.js';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import './App.css';
+import ModeSelect from './components/ModeSelect';
+import QuizSetup from './components/QuizSetup';
+import Question from './components/Question';
 
 class App extends Component {
   render() {
@@ -17,7 +17,7 @@ class App extends Component {
             <QuizSetup />
           </Route>
           <Route path="/play">
-            <QuestionCard />
+            <Question />
           </Route>
         </Switch>
       </Router>
