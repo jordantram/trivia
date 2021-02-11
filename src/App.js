@@ -4,6 +4,7 @@ import './App.css';
 import ModeSelect from './components/ModeSelect';
 import QuizSetup from './components/QuizSetup';
 import Question from './components/Question';
+import Answer from './components/Answer';
 import Score from './components/Score';
 
 class App extends Component {
@@ -20,6 +21,7 @@ class App extends Component {
           <Route path="/play">
             <Score />
             <Question />
+            <Answer />
           </Route>
         </Switch>
       </Router>
