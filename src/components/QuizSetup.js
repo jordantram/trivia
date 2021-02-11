@@ -1,6 +1,6 @@
 import React from 'react';
 
-const QuizSetup = () => {
+const QuizSetup = ({ gameMode }) => {
   return (
     <div>
       Quiz Setup
