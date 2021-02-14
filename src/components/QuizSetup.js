@@ -46,7 +46,7 @@ const QuizSetup = ({ mode, categories }) => {
                 <Input placeholder="Enter a unique room name" />
               </FormControl>
             : null }
-          <Button size="md" colorScheme="blue" fontWeight="bold" mt="2em" width="full" pt="1.5em" pb="1.5em">
+          <Button size="md" colorScheme="blue" fontWeight="bold" fontSize="1.25em" mt="2em" width="full" pt="1.25em" pb="1.25em">
             Start!
           </Button>
         </form>
