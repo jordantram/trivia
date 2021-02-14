@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import ModeSelect from './components/ModeSelect';
 import QuizSetup from './components/QuizSetup';
@@ -26,7 +26,7 @@ const App = () => {
     fetch('https://opentdb.com/api_category.php')
       .then(response => response.json())
       .then(data => setCategories(data.trivia_categories)) 
-    }, []);
+  }, []); // runs only once on initial render
 
   const onModeSelect = (mode) => {
     setGameMode(mode);
@@ -40,7 +40,9 @@ const App = () => {
             <ModeSelect onModeSelect={onModeSelect} />
           </Route>
           <Route path="/setup">
-            <QuizSetup mode={gameMode} categories={categories} />
+            {gameMode
+              ? <QuizSetup mode={gameMode} categories={categories} />
+              : <Redirect to={{ pathName: "/" }} />}
           </Route>
           <Route path="/play">
             <Score />
@@ -50,7 +52,6 @@ const App = () => {
         </Switch>
       </Router>
     </ChakraProvider>
-    
   );
 }
 
