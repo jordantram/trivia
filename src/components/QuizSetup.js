@@ -12,7 +12,8 @@ const QuizSetup = ({ mode, categories }) => {
 
   return (
     <Flex width="full" align="center" justifyContent="center" position="fixed" top="10%">
-      <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md">
+      <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md" 
+        width={{ base: "85%", sm: "70%", md: "55%", lg: "45%", xl: "35%", "2xl": "25%" }}>
         <Heading size="lg" align="center">Create Game</Heading>
         <form>
           <FormControl mt="2em">
