@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
@@ -18,40 +18,40 @@ const colors = {
 
 const theme = extendTheme({ colors })
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      gameMode: ''
-    };
-  }
+const App = () => {
+  const [gameMode, setGameMode] = useState('');
+  const [categories, setCategories] = useState([]);
 
-  onModeSelect = (mode) => {
-    this.setState({ gameMode: mode });
-  }
+  useEffect(() => {
+    fetch('https://opentdb.com/api_category.php')
+      .then(response => response.json())
+      .then(data => setCategories(data.trivia_categories)) 
+    }, []);
 
-  render() {
-    return (
-      <ChakraProvider theme={theme}>
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              <ModeSelect onModeSelect={this.onModeSelect} />
-            </Route>
-            <Route path="/setup">
-              <QuizSetup mode={this.state.gameMode} />
-            </Route>
-            <Route path="/play">
-              <Score />
-              <Question />
-              <Answer />
-            </Route>
-          </Switch>
-        </Router>
-      </ChakraProvider>
-      
-    );
-  }
+  const onModeSelect = (mode) => {
+    setGameMode(mode);
+  };
+
+  return (
+    <ChakraProvider theme={theme}>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <ModeSelect onModeSelect={onModeSelect} />
+          </Route>
+          <Route path="/setup">
+            <QuizSetup mode={gameMode} categories={categories} />
+          </Route>
+          <Route path="/play">
+            <Score />
+            <Question />
+            <Answer />
+          </Route>
+        </Switch>
+      </Router>
+    </ChakraProvider>
+    
+  );
 }
 
 export default App;

@@ -1,11 +1,50 @@
 import React from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Flex, Heading, Select, FormControl, FormLabel, Button,
+         NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } 
+        from '@chakra-ui/react';
 
-const QuizSetup = ({ gameMode }) => {
+const QuizSetup = ({ gameMode, categories }) => {
+  const categorySelections = categories.map(category => {
+    return (
+      <option key={category.id} value={category.id}>{category.name}</option>
+    );
+  });
+
   return (
-    <Box borderWidth="1px" borderRadius="lg" align="center">
-      Testing
-    </Box>
+    <Flex width="full" align="center" justifyContent="center" position="fixed" top="10%">
+      <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md">
+        <Heading size="lg" align="center">Create Game</Heading>
+        <form>
+          <FormControl mt="2em">
+            <FormLabel>Number of Questions:</FormLabel>
+            <NumberInput defaultValue={10} min={5} max={25}>
+              <NumberInputField />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </FormControl>
+          <FormControl mt="1.5em">
+            <FormLabel>Select Difficulty:</FormLabel>
+            <Select placeholder="Any Difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </Select>
+          </FormControl>
+          <FormControl mt="1.5em">
+            <FormLabel>Select Category:</FormLabel>
+            <Select placeholder="Any Category">
+              {categorySelections}
+            </Select>
+          </FormControl>
+          <Button size="md" colorScheme="blue" fontWeight="bold" mt="2em" width="full">
+            Start!
+          </Button>
+        </form>
+      </Box>
+    </Flex>
   );
 };
 
