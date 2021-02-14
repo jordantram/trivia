@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, Flex, Heading, Select, FormControl, FormLabel, Button,
+import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input,
          NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } 
         from '@chakra-ui/react';
 
-const QuizSetup = ({ gameMode, categories }) => {
+const QuizSetup = ({ mode, categories }) => {
   const categorySelections = categories.map(category => {
     return (
       <option key={category.id} value={category.id}>{category.name}</option>
@@ -39,6 +39,12 @@ const QuizSetup = ({ gameMode, categories }) => {
               {categorySelections}
             </Select>
           </FormControl>
+          {mode === 'multiplayer'
+            ? <FormControl mt="1.5em" isRequired>
+                <FormLabel>Room Code:</FormLabel>
+                <Input placeholder="Enter a unique room name" />
+              </FormControl>
+            : null }
           <Button size="md" colorScheme="blue" fontWeight="bold" mt="2em" width="full">
             Start!
           </Button>
