@@ -28,20 +28,24 @@ const App = () => {
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
 
-  const onModeSelect = (mode) => {
+  const handleModeSelect = (mode) => {
     setGameMode(mode);
   };
+
+  const handleFormSubmit = () => {
+
+  }
 
   return (
     <ChakraProvider theme={theme}>
       <Router>
         <Switch>
           <Route exact path="/">
-            <ModeSelect onModeSelect={onModeSelect} />
+            <ModeSelect handleModeSelect={handleModeSelect} />
           </Route>
           <Route path="/setup">
             {gameMode
-              ? <QuizSetup mode={gameMode} categories={categories} />
+              ? <QuizSetup mode={gameMode} categories={categories} handleFormSubmit={handleFormSubmit} />
               : <Redirect to={{ pathName: "/" }} />}
           </Route>
           <Route path="/play">

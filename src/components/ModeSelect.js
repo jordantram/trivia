@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Box, Button, Heading, Text, Stack, Icon } from '@chakra-ui/react';
 import { FaUser, FaUsers } from 'react-icons/fa';
 
-const ModeSelect = ({ onModeSelect }) => {
+const ModeSelect = ({ handleModeSelect }) => {
   return (
     <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)"
       width={{ base: "100%" }}>
@@ -17,13 +17,13 @@ const ModeSelect = ({ onModeSelect }) => {
         </Text>
         <Stack spacing={5} direction="row" align="center" justify="center" mt="8">
           <Button size="lg" colorScheme="blue" fontWeight="bold" fontSize={{ sm: "1rem", md: "1.125rem" }}>
-            <Link to="/setup" onClick={() => { onModeSelect('solo') }}>
+            <Link to="/setup" onClick={() => { handleModeSelect('solo') }}>
               Play Solo &nbsp;
               <Icon as={FaUser} />
             </Link>
           </Button>
           <Button size="lg" colorScheme="blue" fontWeight="bold" fontSize={{ sm: "1rem", md: "1.125rem" }}>
-            <Link to="/setup" onClick={() => { onModeSelect('multiplayer') }}>
+            <Link to="/setup" onClick={() => { handleModeSelect('multiplayer') }}>
               Play With Friends &nbsp;
               <Icon as={FaUsers} />
             </Link>
