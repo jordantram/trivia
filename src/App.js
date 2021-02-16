@@ -21,6 +21,12 @@ const theme = extendTheme({ colors })
 const App = () => {
   const [gameMode, setGameMode] = useState('');
   const [categories, setCategories] = useState([]);
+  const [gameSettings, setGameSettings] = useState({
+    numOfQuestions: 10,
+    category: undefined,
+    difficulty: undefined,
+    roomCode: ''
+  });
 
   useEffect(() => {
     fetch('https://opentdb.com/api_category.php')
@@ -32,8 +38,13 @@ const App = () => {
     setGameMode(mode);
   };
 
-  const handleFormSubmit = () => {
-
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    setGameSettings({
+      ...gameSettings,
+      numOfQuestions: parseInt(gameSettings.numOfQuestions),
+      category: gameSettings.category ? parseInt(gameSettings.category) : gameSettings.category
+    });  
   }
 
   return (
@@ -45,7 +56,8 @@ const App = () => {
           </Route>
           <Route path="/setup">
             {gameMode
-              ? <QuizSetup mode={gameMode} categories={categories} handleFormSubmit={handleFormSubmit} />
+              ? <QuizSetup mode={gameMode} categories={categories} 
+                  gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
               : <Redirect to={{ pathName: "/" }} />}
           </Route>
           <Route path="/play">
