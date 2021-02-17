@@ -45,6 +45,8 @@ const App = () => {
       numOfQuestions: parseInt(gameSettings.numOfQuestions),
       category: gameSettings.category ? parseInt(gameSettings.category) : gameSettings.category
     });  
+
+    // Fetch questions/answers from OpenTrivia DB
   }
 
   return (

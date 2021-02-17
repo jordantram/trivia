@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input,
+import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text,
          NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } 
         from '@chakra-ui/react';
 
 const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleFormSubmit }) => {
   let history = useHistory();
+
+  const numOfQuestionsField = useRef(null);
+  const warning = useRef(null);
 
   const categorySelections = categories.map(category => {
     return (
@@ -17,6 +20,11 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
     if (!event.target) { 
       // there is a bug in NumberInput where it returns event.target.value instead of event
       // this condition takes care of handling event change for NumberInput
+      if (warning.current) {
+        warning.current.style.marginTop = "";
+        warning.current.textContent = "";
+      }
+
       setGameSettings({
         ...gameSettings,
         numOfQuestions: event
@@ -31,8 +39,16 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
   }
 
   const onSubmit = (event) => {
-    history.push("/play");
-    handleFormSubmit(event);
+    const value = numOfQuestionsField.current.value;
+
+    if (value < 5 || value > 25) {
+      event.preventDefault();
+      warning.current.textContent = "Number of questions must be between 5 and 25!";
+      warning.current.style.marginTop = "2em";
+    } else {
+      history.push("/play");
+      handleFormSubmit(event);
+    }
   }
 
   return (
@@ -42,9 +58,16 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
         <Heading size="lg" align="center">Create Game</Heading>
         <form onSubmit={onSubmit}>
           <FormControl mt="2em">
-            <FormLabel>Number of Questions:</FormLabel>
-            <NumberInput defaultValue={10} min={5} max={25} name="numOfQuestions" value={gameSettings.numOfQuestions} onChange={handleChange}>
-              <NumberInputField />
+            <FormLabel>Number of Questions (between 5 and 25):</FormLabel>
+            <NumberInput defaultValue={10} min={5} max={25} name="numOfQuestions" value={gameSettings.numOfQuestions} 
+              clampValueOnBlur={false}
+              onChange={handleChange} 
+              onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                }
+              }}>
+              <NumberInputField ref={numOfQuestionsField} />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -71,6 +94,7 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
                 <Input placeholder="Enter a unique room name" name="roomCode" value={gameSettings.roomCode} onChange={handleChange} />
               </FormControl>
             : null }
+          <Text color="red.500" align="center" ref={warning}></Text>
           <Button type="submit" size="md" colorScheme="blue" fontWeight="bold" fontSize="1.25em" mt="2em" width="full" pt="1.25em" pb="1.25em">
             Start!
           </Button>
