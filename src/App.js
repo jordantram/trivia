@@ -27,12 +27,18 @@ const App = () => {
     difficulty: undefined,
     roomCode: ''
   });
+  const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
     fetch('https://opentdb.com/api_category.php')
       .then(response => response.json())
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
+
+  /* To test fetching of questions from OpenTrivia DB
+  useEffect(() => {
+    console.log(questions)
+  }, [questions]) */
 
   const handleModeSelect = (mode) => {
     setGameMode(mode);
@@ -46,7 +52,15 @@ const App = () => {
       category: gameSettings.category ? parseInt(gameSettings.category) : gameSettings.category
     });  
 
+    const { numOfQuestions, category, difficulty } = gameSettings;
+
     // Fetch questions/answers from OpenTrivia DB
+    fetch(`https://opentdb.com/api.php?amount=${numOfQuestions}` +
+           `&category=${category ? category : ''}` +
+           `&difficulty=${difficulty ? difficulty : ''}` + 
+           `&type=multiple`)
+      .then(response => response.json())
+      .then(data => setQuestions(data.results)); 
   }
 
   return (
