@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import ModeSelect from './components/ModeSelect';
@@ -7,16 +7,6 @@ import QuizSetup from './components/QuizSetup';
 import Question from './components/Question';
 import Answer from './components/Answer';
 import Score from './components/Score';
-
-const colors = {
-  brand: {
-    900: "#1a365d",
-    800: "#153e75",
-    700: "#2a69ac",
-  },
-}
-
-const theme = extendTheme({ colors })
 
 const App = () => {
   const [gameMode, setGameMode] = useState('');
@@ -64,7 +54,7 @@ const App = () => {
   }
 
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider>
       <Router>
         <Switch>
           <Route exact path="/">
