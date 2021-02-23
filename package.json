@@ -12,6 +12,7 @@
     "@types/react": "^17.0.1",
     "@types/react-router-dom": "^5.1.7",
     "framer-motion": "^3.3.0",
+    "html-entities": "^2.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icons": "^4.2.0",

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Flex, Box } from '@chakra-ui/react';
+import { ChakraProvider, Box } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { decode } from 'html-entities';
 import './App.css';
 import ModeSelect from './components/ModeSelect';
 import QuizSetup from './components/QuizSetup';
@@ -60,20 +61,20 @@ const App = () => {
   }
 
   const handleUserAnswer = () => {
+    // Disable all buttons
+
     // Flash the chosen answer button red if incorrect (and correct answer button to green)
     // and green if correct
     setRevealAnswer(true);
 
-
     // Set score accordingly
     setScore(score + 1);
 
-
-    // Wait for 2.5 seconds and turn off answer reveal and increment current question count
+    // Wait for 2 seconds and turn off answer reveal and increment current question count
     setTimeout(() => {
       setRevealAnswer(false);
       setCurrentQuestion(currentQuestion + 1);
-    }, 2500);
+    }, 2000);
   }
 
   return (
@@ -96,11 +97,15 @@ const App = () => {
                   <Score score={score} />
                   <Question category={questions[currentQuestion].category} 
                     difficulty={questions[currentQuestion].difficulty}
-                    question={questions[currentQuestion].question} />
-                  <Answer answer={questions[currentQuestion].correct_answer} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
-                  <Answer answer={questions[currentQuestion].incorrect_answers[0]} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
-                  <Answer answer={questions[currentQuestion].incorrect_answers[1]} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
-                  <Answer answer={questions[currentQuestion].incorrect_answers[2]} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                    question={decode(questions[currentQuestion].question)} />
+                  <Answer answer={decode(questions[currentQuestion].correct_answer)} 
+                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                  <Answer answer={decode(questions[currentQuestion].incorrect_answers[0])} 
+                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                  <Answer answer={decode(questions[currentQuestion].incorrect_answers[1])} 
+                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                  <Answer answer={decode(questions[currentQuestion].incorrect_answers[2])} 
+                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
                 </Box>
               : null
             }
