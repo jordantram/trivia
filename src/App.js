@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Flex, Box } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import ModeSelect from './components/ModeSelect';
@@ -18,6 +18,9 @@ const App = () => {
     roomCode: ''
   });
   const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [revealAnswer, setRevealAnswer] = useState(false);
 
   useEffect(() => {
     fetch('https://opentdb.com/api_category.php')
@@ -42,6 +45,9 @@ const App = () => {
       category: gameSettings.category ? parseInt(gameSettings.category) : gameSettings.category
     });  
 
+    setCurrentQuestion(0);
+    setScore(0);
+
     const { numOfQuestions, category, difficulty } = gameSettings;
 
     // Fetch questions/answers from OpenTrivia DB
@@ -51,6 +57,23 @@ const App = () => {
            `&type=multiple`)
       .then(response => response.json())
       .then(data => setQuestions(data.results)); 
+  }
+
+  const handleUserAnswer = () => {
+    // Flash the chosen answer button red if incorrect (and correct answer button to green)
+    // and green if correct
+    setRevealAnswer(true);
+
+
+    // Set score accordingly
+    setScore(score + 1);
+
+
+    // Wait for 2.5 seconds and turn off answer reveal and increment current question count
+    setTimeout(() => {
+      setRevealAnswer(false);
+      setCurrentQuestion(currentQuestion + 1);
+    }, 2500);
   }
 
   return (
@@ -64,12 +87,23 @@ const App = () => {
             {gameMode
               ? <QuizSetup mode={gameMode} categories={categories} 
                   gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
-              : <Redirect to={{ pathName: "/" }} />}
+              : <Redirect to={{ pathName: "/" }} />
+            }
           </Route>
           <Route path="/play">
-            <Score />
-            <Question />
-            <Answer />
+            {currentQuestion < questions.length
+              ? <Box>
+                  <Score score={score} />
+                  <Question category={questions[currentQuestion].category} 
+                    difficulty={questions[currentQuestion].difficulty}
+                    question={questions[currentQuestion].question} />
+                  <Answer answer={questions[currentQuestion].correct_answer} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                  <Answer answer={questions[currentQuestion].incorrect_answers[0]} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                  <Answer answer={questions[currentQuestion].incorrect_answers[1]} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                  <Answer answer={questions[currentQuestion].incorrect_answers[2]} revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                </Box>
+              : null
+            }
           </Route>
         </Switch>
       </Router>

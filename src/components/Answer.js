@@ -1,10 +1,11 @@
 import React from 'react';
+import { Button } from '@chakra-ui/react';
 
-const Answer = () => {
+const Answer = ({ answer, revealAnswer, handleUserAnswer }) => {
   return (
-    <div>
-      Answer
-    </div>
+    <Button onClick={handleUserAnswer}>
+      {answer}
+    </Button>
   );
 };
 
