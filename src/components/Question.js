@@ -1,10 +1,11 @@
 import React from 'react';
+import { Box } from '@chakra-ui/react';
 
 const Question = ({ category, difficulty, question }) => {
   return (
-    <div>
+    <Box>
       Question: {question}
-    </div>
+    </Box>
   );
 };
 

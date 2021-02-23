@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box } from '@chakra-ui/react';
+import { ChakraProvider, Box, ButtonGroup } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
 import './App.css';
@@ -19,6 +19,7 @@ const App = () => {
     roomCode: ''
   });
   const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [revealAnswer, setRevealAnswer] = useState(false);
@@ -46,6 +47,7 @@ const App = () => {
       category: gameSettings.category ? parseInt(gameSettings.category) : gameSettings.category
     });  
 
+    /* Remove once end-of-game resetting actions function completed */
     setCurrentQuestion(0);
     setScore(0);
 
@@ -60,15 +62,15 @@ const App = () => {
       .then(data => setQuestions(data.results)); 
   }
 
-  const handleUserAnswer = () => {
-    // Disable all buttons
-
+  const handleUserAnswer = (correct) => {
     // Flash the chosen answer button red if incorrect (and correct answer button to green)
     // and green if correct
     setRevealAnswer(true);
 
     // Set score accordingly
-    setScore(score + 1);
+    if (correct) {
+      setScore(score + 1);
+    }
 
     // Wait for 2 seconds and turn off answer reveal and increment current question count
     setTimeout(() => {
@@ -98,14 +100,16 @@ const App = () => {
                   <Question category={questions[currentQuestion].category} 
                     difficulty={questions[currentQuestion].difficulty}
                     question={decode(questions[currentQuestion].question)} />
-                  <Answer answer={decode(questions[currentQuestion].correct_answer)} 
-                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
-                  <Answer answer={decode(questions[currentQuestion].incorrect_answers[0])} 
-                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
-                  <Answer answer={decode(questions[currentQuestion].incorrect_answers[1])} 
-                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
-                  <Answer answer={decode(questions[currentQuestion].incorrect_answers[2])} 
-                    revealAnswer={revealAnswer} handleUserAnswer={handleUserAnswer} />
+                  <ButtonGroup>
+                    <Answer answer={decode(questions[currentQuestion].correct_answer)} 
+                      revealAnswer={revealAnswer} correct={true} handleUserAnswer={handleUserAnswer} />
+                    <Answer answer={decode(questions[currentQuestion].incorrect_answers[0])} 
+                      revealAnswer={revealAnswer} correct={false} handleUserAnswer={handleUserAnswer} />
+                    <Answer answer={decode(questions[currentQuestion].incorrect_answers[1])} 
+                      revealAnswer={revealAnswer} correct={false} handleUserAnswer={handleUserAnswer} />
+                    <Answer answer={decode(questions[currentQuestion].incorrect_answers[2])} 
+                      revealAnswer={revealAnswer} correct={false} handleUserAnswer={handleUserAnswer} />
+                  </ButtonGroup>
                 </Box>
               : null
             }
