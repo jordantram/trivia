@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, ButtonGroup } from '@chakra-ui/react';
+import { ChakraProvider, Box, SimpleGrid } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
 import { shuffle } from 'd3-array';
@@ -98,12 +98,13 @@ const App = () => {
           </Route>
           <Route path="/play">
             {currentQuestion < questions.length
-              ? <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
+              ? <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)" 
+                  align="center" justifyItems="center">
                   <Score score={score} />
-                  <Question category={questions[currentQuestion].category} 
+                  <Question category={questions[currentQuestion].category}
                     difficulty={questions[currentQuestion].difficulty}
                     question={decode(questions[currentQuestion].question)} />
-                  <ButtonGroup>
+                  <SimpleGrid columns={2} spacing={2} mt={6}>
                     {questions[currentQuestion].answers.map((answerRaw, index) => {
                       return (
                         <Answer key={index} 
@@ -113,7 +114,7 @@ const App = () => {
                           handleUserAnswer={handleUserAnswer} />
                       );
                     })}
-                  </ButtonGroup>
+                  </SimpleGrid>
                 </Box>
               : null
             }
