@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChakraProvider, Box, ButtonGroup } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
+import { shuffle } from 'd3-array';
 import './App.css';
 import ModeSelect from './components/ModeSelect';
 import QuizSetup from './components/QuizSetup';
@@ -18,8 +19,8 @@ const App = () => {
     difficulty: undefined,
     roomCode: ''
   });
+
   const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [revealAnswer, setRevealAnswer] = useState(false);
@@ -30,10 +31,10 @@ const App = () => {
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
 
-  /* To test fetching of questions from OpenTrivia DB
+  // To test fetching of questions from OpenTrivia DB
   useEffect(() => {
     console.log(questions)
-  }, [questions]) */
+  }, [questions])
 
   const handleModeSelect = (mode) => {
     setGameMode(mode);
@@ -47,11 +48,11 @@ const App = () => {
       category: gameSettings.category ? parseInt(gameSettings.category) : gameSettings.category
     });  
 
-    /* Remove once end-of-game resetting actions function completed */
+    const { numOfQuestions, category, difficulty } = gameSettings;
+
+    /* Remove after resetting function done */
     setCurrentQuestion(0);
     setScore(0);
-
-    const { numOfQuestions, category, difficulty } = gameSettings;
 
     // Fetch questions/answers from OpenTrivia DB
     fetch(`https://opentdb.com/api.php?amount=${numOfQuestions}` +
@@ -59,7 +60,13 @@ const App = () => {
            `&difficulty=${difficulty ? difficulty : ''}` + 
            `&type=multiple`)
       .then(response => response.json())
-      .then(data => setQuestions(data.results)); 
+      .then(data => { 
+        setQuestions(data.results.map(question => {
+          return (
+            { ...question, answers: shuffle([question.correct_answer, ...question.incorrect_answers]) }
+          );
+        }));
+      });
   }
 
   const handleUserAnswer = (correct) => {
@@ -72,12 +79,13 @@ const App = () => {
       setScore(score + 1);
     }
 
-    // Wait for 2 seconds and turn off answer reveal and increment current question count
+    // Wait for 2 seconds then turn off answer reveal and increment current question count
     setTimeout(() => {
-      setRevealAnswer(false);
       setCurrentQuestion(currentQuestion + 1);
+      setRevealAnswer(false);
     }, 2000);
   }
+
 
   return (
     <ChakraProvider>
@@ -94,21 +102,22 @@ const App = () => {
             }
           </Route>
           <Route path="/play">
-            {currentQuestion < questions.length
-              ? <Box>
+            {(currentQuestion < questions.length && currentQuestion >= 0)
+              ? <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
                   <Score score={score} />
                   <Question category={questions[currentQuestion].category} 
                     difficulty={questions[currentQuestion].difficulty}
                     question={decode(questions[currentQuestion].question)} />
                   <ButtonGroup>
-                    <Answer answer={decode(questions[currentQuestion].correct_answer)} 
-                      revealAnswer={revealAnswer} correct={true} handleUserAnswer={handleUserAnswer} />
-                    <Answer answer={decode(questions[currentQuestion].incorrect_answers[0])} 
-                      revealAnswer={revealAnswer} correct={false} handleUserAnswer={handleUserAnswer} />
-                    <Answer answer={decode(questions[currentQuestion].incorrect_answers[1])} 
-                      revealAnswer={revealAnswer} correct={false} handleUserAnswer={handleUserAnswer} />
-                    <Answer answer={decode(questions[currentQuestion].incorrect_answers[2])} 
-                      revealAnswer={revealAnswer} correct={false} handleUserAnswer={handleUserAnswer} />
+                    {questions[currentQuestion].answers.map((answerRaw, index) => {
+                      return (
+                        <Answer key={index} 
+                          answer={decode(answerRaw)} 
+                          revealAnswer={revealAnswer} 
+                          correct={answerRaw === questions[currentQuestion].correct_answer ? true : false} 
+                          handleUserAnswer={handleUserAnswer} />
+                      );
+                    })}
                   </ButtonGroup>
                 </Box>
               : null
