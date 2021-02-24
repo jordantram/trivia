@@ -31,10 +31,10 @@ const App = () => {
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
 
-  // To test fetching of questions from OpenTrivia DB
+  /* To test fetching of questions from OpenTrivia DB
   useEffect(() => {
     console.log(questions)
-  }, [questions])
+  }, [questions]) */
 
   const handleModeSelect = (mode) => {
     setGameMode(mode);
@@ -49,10 +49,6 @@ const App = () => {
     });  
 
     const { numOfQuestions, category, difficulty } = gameSettings;
-
-    /* Remove after resetting function done */
-    setCurrentQuestion(0);
-    setScore(0);
 
     // Fetch questions/answers from OpenTrivia DB
     fetch(`https://opentdb.com/api.php?amount=${numOfQuestions}` +
@@ -86,7 +82,6 @@ const App = () => {
     }, 2000);
   }
 
-
   return (
     <ChakraProvider>
       <Router>
@@ -102,7 +97,7 @@ const App = () => {
             }
           </Route>
           <Route path="/play">
-            {(currentQuestion < questions.length && currentQuestion >= 0)
+            {currentQuestion < questions.length
               ? <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
                   <Score score={score} />
                   <Question category={questions[currentQuestion].category} 
