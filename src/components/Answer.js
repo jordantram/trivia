@@ -3,7 +3,7 @@ import { Button } from '@chakra-ui/react';
 
 const Answer = ({ answer, revealAnswer, correct, handleUserAnswer }) => {
   return (
-    <Button width="sm"
+    <Button height="3em"
       onClick={() => { handleUserAnswer(correct) }}
       colorScheme={revealAnswer ? (correct ? "green" : "red") : null}
       pointerEvents={revealAnswer ? "none" : null}

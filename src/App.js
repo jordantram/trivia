@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, SimpleGrid } from '@chakra-ui/react';
+import { ChakraProvider, Box, Grid, GridItem, SimpleGrid } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
 import { shuffle } from 'd3-array';
@@ -98,23 +98,26 @@ const App = () => {
           </Route>
           <Route path="/play">
             {currentQuestion < questions.length
-              ? <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)" 
-                  align="center" justifyItems="center">
+              ? <Box width="4xl" as="section" align="center" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
                   <Score score={score} />
-                  <Question category={questions[currentQuestion].category}
-                    difficulty={questions[currentQuestion].difficulty}
-                    question={decode(questions[currentQuestion].question)} />
-                  <SimpleGrid columns={2} spacing={2} mt={6}>
-                    {questions[currentQuestion].answers.map((answerRaw, index) => {
-                      return (
-                        <Answer key={index} 
-                          answer={decode(answerRaw)} 
-                          revealAnswer={revealAnswer} 
-                          correct={answerRaw === questions[currentQuestion].correct_answer ? true : false} 
-                          handleUserAnswer={handleUserAnswer} />
-                      );
-                    })}
-                  </SimpleGrid>
+                  <Grid gap={3}>
+                    <GridItem colStart={1} colEnd={2} mb={3} mt={5}>
+                      <Question category={questions[currentQuestion].category}
+                        difficulty={questions[currentQuestion].difficulty}
+                        question={decode(questions[currentQuestion].question)} />
+                    </GridItem>
+                    <SimpleGrid columns={2} spacing={3}>
+                      {questions[currentQuestion].answers.map((answerRaw, index) => {
+                        return (
+                          <Answer key={index} 
+                            answer={decode(answerRaw)} 
+                            revealAnswer={revealAnswer} 
+                            correct={answerRaw === questions[currentQuestion].correct_answer ? true : false} 
+                            handleUserAnswer={handleUserAnswer} />
+                        );
+                      })}
+                    </SimpleGrid>
+                  </Grid>
                 </Box>
               : null
             }

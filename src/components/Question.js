@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Center } from '@chakra-ui/react';
 
 const Question = ({ category, difficulty, question }) => {
   return (
-    <Box width="48.5em" p={8} mt={6} borderWidth="1px" borderRadius="md" boxShadow="md">
-      Question: {question}
-    </Box>
+    <Center p={8} h={125} borderWidth="1px" borderRadius="md" boxShadow="md">
+      {question}
+    </Center>
   );
 };
 
