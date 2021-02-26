@@ -9,6 +9,7 @@ import QuizSetup from './components/QuizSetup';
 import Question from './components/Question';
 import Answer from './components/Answer';
 import Score from './components/Score';
+import GameSummary from './components/GameSummary';
 
 const App = () => {
   const [gameMode, setGameMode] = useState('');
@@ -82,6 +83,21 @@ const App = () => {
     }, 2000);
   }
 
+  const resetGame = () => {
+    setGameMode('');
+    setGameSettings({
+      numOfQuestions: 10,
+      category: undefined,
+      difficulty: undefined,
+      roomCode: ''
+    });
+
+    setQuestions([]);
+    setCurrentQuestion(0);
+    setScore(0);
+    setRevealAnswer(false);
+  }
+
   return (
     <ChakraProvider>
       <Router>
@@ -119,7 +135,9 @@ const App = () => {
                     </SimpleGrid>
                   </Grid>
                 </Box>
-              : null
+              : (questions.length 
+                ? <GameSummary score={score} numOfQuestions={gameSettings.numOfQuestions} resetGame={resetGame} /> 
+                : null)
             }
           </Route>
         </Switch>
