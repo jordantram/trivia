@@ -5,7 +5,7 @@ const Answer = ({ answer, revealAnswer, correct, handleUserAnswer }) => {
   return (
     <Button height="3em"
       onClick={() => { handleUserAnswer(correct) }}
-      colorScheme={revealAnswer ? (correct ? "green" : "red") : null}
+      colorScheme={revealAnswer ? (correct ? "green" : "red") : "blue"}
       pointerEvents={revealAnswer ? "none" : null}
       style={revealAnswer ? null : { boxShadow: "none" }}>
       {answer}

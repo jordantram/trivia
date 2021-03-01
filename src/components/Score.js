@@ -3,7 +3,7 @@ import { Box } from '@chakra-ui/react';
 
 const Score = ({ score }) => {
   return (
-    <Box>
+    <Box fontWeight="bold">
       Score: {score}
     </Box>
   );

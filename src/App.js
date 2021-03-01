@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Grid, GridItem, SimpleGrid } from '@chakra-ui/react';
+import { ChakraProvider, Box, Grid, GridItem, SimpleGrid, Text } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
 import { shuffle } from 'd3-array';
@@ -26,16 +26,18 @@ const App = () => {
   const [score, setScore] = useState(0);
   const [revealAnswer, setRevealAnswer] = useState(false);
 
+  const [timerID, setTimerID] = useState(null);
+
   useEffect(() => {
     fetch('https://opentdb.com/api_category.php')
       .then(response => response.json())
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
 
-  /* To test fetching of questions from OpenTrivia DB
+  // To test fetching of questions from OpenTrivia DB
   useEffect(() => {
     console.log(questions)
-  }, [questions]) */
+  }, [questions])
 
   const handleModeSelect = (mode) => {
     setGameMode(mode);
@@ -43,11 +45,19 @@ const App = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
+
+    if (timerID) {
+      clearTimeout(timerID);
+    }
+
     setGameSettings({
       ...gameSettings,
       numOfQuestions: parseInt(gameSettings.numOfQuestions),
       category: gameSettings.category ? parseInt(gameSettings.category) : gameSettings.category
     });  
+    setCurrentQuestion(0);
+    setScore(0);
+    setRevealAnswer(false);
 
     const { numOfQuestions, category, difficulty } = gameSettings;
 
@@ -76,11 +86,11 @@ const App = () => {
       setScore(score + 1);
     }
 
-    // Wait for 2 seconds then turn off answer reveal and increment current question count
-    setTimeout(() => {
+    // Wait for 1.75 seconds then turn off answer reveal and increment current question count
+    setTimerID(setTimeout(() => {
       setCurrentQuestion(currentQuestion + 1);
       setRevealAnswer(false);
-    }, 2000);
+    }, 1750));
   }
 
   const resetGame = () => {
@@ -96,6 +106,7 @@ const App = () => {
     setCurrentQuestion(0);
     setScore(0);
     setRevealAnswer(false);
+    setTimerID(null);
   }
 
   return (
@@ -109,13 +120,15 @@ const App = () => {
             {gameMode
               ? <QuizSetup mode={gameMode} categories={categories} 
                   gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
-              : <Redirect to={{ pathName: "/" }} />
-            }
+              : <Redirect to={{ pathName: "/" }} />}
           </Route>
           <Route path="/play">
             {currentQuestion < questions.length
-              ? <Box width="4xl" as="section" align="center" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
-                  <Score score={score} />
+              ? <Box width="4xl" as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
+                  <Box display="flex" alignItems="center" justifyContent="space-between">
+                    <Text fontWeight="bold">Question: {currentQuestion + 1}/{questions.length}</Text>
+                    <Score score={score} />
+                  </Box>
                   <Grid gap={3}>
                     <GridItem colStart={1} colEnd={2} mb={3} mt={5}>
                       <Question category={questions[currentQuestion].category}
