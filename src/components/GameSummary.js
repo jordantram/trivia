@@ -11,7 +11,7 @@ const GameSummary = ({ score, numOfQuestions, resetGame }) => {
   }
 
   return (
-    <Box width="4xl" as="section" align="center" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
+    <Box width="4xl" as="section" align="center" position="fixed" top="30%" left="50%" transform="translate(-50%, -30%)">
       <Text mt="4" fontSize="lg">
         You finished with a score of {score} out of {numOfQuestions}{(score / numOfQuestions >= 0.8) ? "!" : "."}
       </Text>

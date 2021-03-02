@@ -3,7 +3,9 @@ import { Center } from '@chakra-ui/react';
 
 const Question = ({ category, difficulty, question }) => {
   return (
-    <Center align="center" p={8} h={125} borderWidth="1px" borderRadius="md" boxShadow="md">
+    <Center align="center" 
+      h={{ base: "160px", sm: "150px", md: "140px", lg: "130px", xl: "130px", "2xl": "130px" }}
+      p={8} borderWidth="1px" borderRadius="md" boxShadow="md">
       {question}
     </Center>
   );

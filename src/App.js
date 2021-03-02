@@ -34,10 +34,10 @@ const App = () => {
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
 
-  // To test fetching of questions from OpenTrivia DB
+  /* To test fetching of questions from OpenTrivia DB
   useEffect(() => {
     console.log(questions)
-  }, [questions])
+  }, [questions]) */
 
   const handleModeSelect = (mode) => {
     setGameMode(mode);
@@ -106,6 +106,7 @@ const App = () => {
     setCurrentQuestion(0);
     setScore(0);
     setRevealAnswer(false);
+
     setTimerID(null);
   }
 
@@ -124,7 +125,8 @@ const App = () => {
           </Route>
           <Route path="/play">
             {currentQuestion < questions.length
-              ? <Box width="4xl" as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)">
+              ? <Box as="section" position="fixed" top="30%" left="50%" transform="translate(-50%, -30%)"
+                  width={{ base: "90%", sm: "75%", md: "60%", lg: "70%", xl: "60%", "2xl": "50%" }}>
                   <Box display="flex" alignItems="center" justifyContent="space-between">
                     <Text fontWeight="bold">Question: {currentQuestion + 1}/{questions.length}</Text>
                     <Score score={score} />
@@ -135,7 +137,7 @@ const App = () => {
                         difficulty={questions[currentQuestion].difficulty}
                         question={decode(questions[currentQuestion].question)} />
                     </GridItem>
-                    <SimpleGrid columns={2} spacing={3}>
+                    <SimpleGrid columns={{ base: "1", sm: "1", md: "1", lg: "2", xl: "2", "2xl": "2" }} spacing={3}>
                       {questions[currentQuestion].answers.map((answerRaw, index) => {
                         return (
                           <Answer key={index} 
