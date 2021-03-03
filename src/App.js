@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Grid, GridItem, SimpleGrid, Text } from '@chakra-ui/react';
+import { Box, Grid, GridItem, SimpleGrid, Text, useColorMode, Button } from '@chakra-ui/react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
 import { shuffle } from 'd3-array';
@@ -12,6 +12,8 @@ import Score from './components/Score';
 import GameSummary from './components/GameSummary';
 
 const App = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
+
   const [gameMode, setGameMode] = useState('');
   const [categories, setCategories] = useState([]);
   const [gameSettings, setGameSettings] = useState({
@@ -111,53 +113,54 @@ const App = () => {
   }
 
   return (
-    <ChakraProvider>
-      <Router>
-        <Switch>
-          <Route exact path="/">
-            <ModeSelect handleModeSelect={handleModeSelect} />
-          </Route>
-          <Route path="/setup">
-            {gameMode
-              ? <QuizSetup mode={gameMode} categories={categories} 
-                  gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
-              : <Redirect to={{ pathName: "/" }} />}
-          </Route>
-          <Route path="/play">
-            {currentQuestion < questions.length
-              ? <Box as="section" position="fixed" top="30%" left="50%" transform="translate(-50%, -30%)"
-                  width={{ base: "90%", sm: "75%", md: "60%", lg: "70%", xl: "60%", "2xl": "50%" }}>
-                  <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Text fontWeight="bold">Question: {currentQuestion + 1}/{questions.length}</Text>
-                    <Score score={score} />
-                  </Box>
-                  <Grid gap={3}>
-                    <GridItem colStart={1} colEnd={2} mb={3} mt={5}>
-                      <Question category={questions[currentQuestion].category}
-                        difficulty={questions[currentQuestion].difficulty}
-                        question={decode(questions[currentQuestion].question)} />
-                    </GridItem>
-                    <SimpleGrid columns={{ base: "1", sm: "1", md: "1", lg: "2", xl: "2", "2xl": "2" }} spacing={3}>
-                      {questions[currentQuestion].answers.map((answerRaw, index) => {
-                        return (
-                          <Answer key={index} 
-                            answer={decode(answerRaw)} 
-                            revealAnswer={revealAnswer} 
-                            correct={answerRaw === questions[currentQuestion].correct_answer ? true : false} 
-                            handleUserAnswer={handleUserAnswer} />
-                        );
-                      })}
-                    </SimpleGrid>
-                  </Grid>
+    <Router>
+      <Button onClick={toggleColorMode} position="fixed" bottom="1em" right="1em">
+        Toggle {colorMode === "light" ? "Dark" : "Light"}
+      </Button>
+      <Switch>
+        <Route exact path="/">
+          <ModeSelect handleModeSelect={handleModeSelect} />
+        </Route>
+        <Route path="/setup">
+          {gameMode
+            ? <QuizSetup mode={gameMode} categories={categories} 
+                gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
+            : <Redirect to={{ pathName: "/" }} />}
+        </Route>
+        <Route path="/play">
+          {currentQuestion < questions.length
+            ? <Box as="section" position="fixed" top="30%" left="50%" transform="translate(-50%, -30%)"
+                width={{ base: "90%", sm: "75%", md: "60%", lg: "70%", xl: "60%", "2xl": "50%" }}>
+                <Box display="flex" alignItems="center" justifyContent="space-between">
+                  <Text fontWeight="bold">Question: {currentQuestion + 1}/{questions.length}</Text>
+                  <Score score={score} />
                 </Box>
-              : (questions.length 
-                ? <GameSummary score={score} numOfQuestions={gameSettings.numOfQuestions} resetGame={resetGame} /> 
-                : null)
-            }
-          </Route>
-        </Switch>
-      </Router>
-    </ChakraProvider>
+                <Grid gap={3}>
+                  <GridItem colStart={1} colEnd={2} mb={3} mt={5}>
+                    <Question category={questions[currentQuestion].category}
+                      difficulty={questions[currentQuestion].difficulty}
+                      question={decode(questions[currentQuestion].question)} />
+                  </GridItem>
+                  <SimpleGrid columns={{ base: "1", sm: "1", md: "1", lg: "2", xl: "2", "2xl": "2" }} spacing={3}>
+                    {questions[currentQuestion].answers.map((answerRaw, index) => {
+                      return (
+                        <Answer key={index} 
+                          answer={decode(answerRaw)} 
+                          revealAnswer={revealAnswer} 
+                          correct={answerRaw === questions[currentQuestion].correct_answer ? true : false} 
+                          handleUserAnswer={handleUserAnswer} />
+                      );
+                    })}
+                  </SimpleGrid>
+                </Grid>
+              </Box>
+            : (questions.length 
+              ? <GameSummary score={score} numOfQuestions={gameSettings.numOfQuestions} resetGame={resetGame} /> 
+              : null)
+          }
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
