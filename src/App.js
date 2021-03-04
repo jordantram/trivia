@@ -24,7 +24,7 @@ const App = () => {
   });
 
   const [questions, setQuestions] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
   const [score, setScore] = useState(0);
   const [revealAnswer, setRevealAnswer] = useState(false);
 
@@ -105,7 +105,7 @@ const App = () => {
     });
 
     setQuestions([]);
-    setCurrentQuestion(0);
+    setCurrentQuestion(null);
     setScore(0);
     setRevealAnswer(false);
 
@@ -128,36 +128,38 @@ const App = () => {
             : <Redirect to={{ pathName: "/" }} />}
         </Route>
         <Route path="/play">
-          {currentQuestion < questions.length
-            ? <Box as="section" position="fixed" top="30%" left="50%" transform="translate(-50%, -30%)"
-                width={{ base: "90%", sm: "75%", md: "60%", lg: "70%", xl: "60%", "2xl": "50%" }}>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                  <Text fontWeight="bold">Question: {currentQuestion + 1}/{questions.length}</Text>
-                  <Score score={score} />
+          { currentQuestion !== null
+            ? (currentQuestion < questions.length
+              ? <Box as="section" position="fixed" top="30%" left="50%" transform="translate(-50%, -30%)"
+                  width={{ base: "90%", sm: "75%", md: "60%", lg: "70%", xl: "60%", "2xl": "50%" }}>
+                  <Box display="flex" alignItems="center" justifyContent="space-between">
+                    <Text fontWeight="bold">Question: {currentQuestion + 1}/{questions.length}</Text>
+                    <Score score={score} />
+                  </Box>
+                  <Grid gap={3}>
+                    <GridItem colStart={1} colEnd={2} mb={3} mt={5}>
+                      <Question category={questions[currentQuestion].category}
+                        difficulty={questions[currentQuestion].difficulty}
+                        question={decode(questions[currentQuestion].question)} />
+                    </GridItem>
+                    <SimpleGrid columns={{ base: "1", sm: "1", md: "1", lg: "2", xl: "2", "2xl": "2" }} spacing={3}>
+                      {questions[currentQuestion].answers.map((answerRaw, index) => {
+                        return (
+                          <Answer key={index} 
+                            answer={decode(answerRaw)} 
+                            revealAnswer={revealAnswer} 
+                            correct={answerRaw === questions[currentQuestion].correct_answer ? true : false} 
+                            handleUserAnswer={handleUserAnswer} />
+                        );
+                      })}
+                    </SimpleGrid>
+                  </Grid>
                 </Box>
-                <Grid gap={3}>
-                  <GridItem colStart={1} colEnd={2} mb={3} mt={5}>
-                    <Question category={questions[currentQuestion].category}
-                      difficulty={questions[currentQuestion].difficulty}
-                      question={decode(questions[currentQuestion].question)} />
-                  </GridItem>
-                  <SimpleGrid columns={{ base: "1", sm: "1", md: "1", lg: "2", xl: "2", "2xl": "2" }} spacing={3}>
-                    {questions[currentQuestion].answers.map((answerRaw, index) => {
-                      return (
-                        <Answer key={index} 
-                          answer={decode(answerRaw)} 
-                          revealAnswer={revealAnswer} 
-                          correct={answerRaw === questions[currentQuestion].correct_answer ? true : false} 
-                          handleUserAnswer={handleUserAnswer} />
-                      );
-                    })}
-                  </SimpleGrid>
-                </Grid>
-              </Box>
-            : (questions.length 
-              ? <GameSummary score={score} numOfQuestions={gameSettings.numOfQuestions} resetGame={resetGame} /> 
-              : null)
-          }
+              : (questions.length 
+                ? <GameSummary score={score} numOfQuestions={gameSettings.numOfQuestions} resetGame={resetGame} /> 
+                : null)
+              )
+            : <Redirect to={{ pathName: "/" }} />}
         </Route>
       </Switch>
     </Router>
