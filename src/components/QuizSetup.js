@@ -44,7 +44,7 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
     if (value < 5 || value > 25) {
       event.preventDefault();
       warning.current.textContent = "Number of questions must be between 5 and 25!";
-      warning.current.style.marginTop = "2em";
+      warning.current.style.marginTop = "1.5em";
     } else {
       history.push("/play");
       handleFormSubmit(event);
@@ -52,7 +52,7 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
   }
 
   return (
-    <Flex width="full" maxHeight="50%" align="center" justifyContent="center" mt="5%">
+    <Flex width="full" maxHeight="50%" align="center" justifyContent="center" mt="5%" mb="5%">
       <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md" 
         width={{ base: "85%", sm: "70%", md: "55%", lg: "45%", xl: "35%", "2xl": "25%" }}>
         <Heading size="lg" align="center">Create Game</Heading>
@@ -95,7 +95,7 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
               </FormControl>
             : null }
           <Text color="red.500" align="center" ref={warning}></Text>
-          <Button type="submit" size="md" colorScheme="blue" fontWeight="bold" fontSize="1.25em" mt="2em" width="full" pt="1.25em" pb="1.25em">
+          <Button type="submit" size="md" colorScheme="blue" fontWeight="bold" fontSize="1.25em" mt="1.5em" width="full" pt="1.25em" pb="1.25em">
             Start!
           </Button>
         </form>

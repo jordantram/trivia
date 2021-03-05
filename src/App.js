@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, GridItem, SimpleGrid, Text, useColorMode, Button } from '@chakra-ui/react';
+import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
+import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
 import { shuffle } from 'd3-array';
@@ -114,9 +115,11 @@ const App = () => {
 
   return (
     <Router>
-      <Button onClick={toggleColorMode} position="fixed" bottom="1em" right="1em">
-        Toggle {colorMode === "light" ? "Dark" : "Light"}
-      </Button>
+      <IconButton onClick={toggleColorMode} 
+        size="lg"
+        aria-label="Toggle color mode" 
+        icon={colorMode === 'light'? <MoonIcon /> : <SunIcon />}
+        position="fixed" bottom="1em" right="1em" />
       <Switch>
         <Route exact path="/">
           <ModeSelect handleModeSelect={handleModeSelect} />
@@ -130,12 +133,12 @@ const App = () => {
         <Route path="/play">
           { currentQuestion !== null
             ? (currentQuestion < questions.length
-              ? <Box as="section" position="fixed" top="30%" left="50%" transform="translate(-50%, -30%)"
+              ? <Flex flexDirection="column" className="center" justifyContent="center" mt="10%" mb="10%"
                   width={{ base: "90%", sm: "75%", md: "60%", lg: "70%", xl: "60%", "2xl": "50%" }}>
-                  <Box display="flex" alignItems="center" justifyContent="space-between">
+                  <Flex alignItems="center" justifyContent="space-between">
                     <Text fontWeight="bold">Question: {currentQuestion + 1}/{questions.length}</Text>
                     <Score score={score} />
-                  </Box>
+                  </Flex>
                   <Grid gap={3}>
                     <GridItem colStart={1} colEnd={2} mb={3} mt={5}>
                       <Question category={questions[currentQuestion].category}
@@ -154,7 +157,7 @@ const App = () => {
                       })}
                     </SimpleGrid>
                   </Grid>
-                </Box>
+                </Flex>
               : (questions.length 
                 ? <GameSummary score={score} numOfQuestions={gameSettings.numOfQuestions} resetGame={resetGame} /> 
                 : null)
