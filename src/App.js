@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import firebase from 'firebase';
 import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -11,6 +12,16 @@ import Question from './components/Question';
 import Answer from './components/Answer';
 import Score from './components/Score';
 import GameSummary from './components/GameSummary';
+
+const firebaseConfig = {
+  apiKey: "REDACTED",
+  authDomain: "REDACTED",
+  projectId: "REDACTED",
+  storageBucket: "REDACTED",
+  messagingSenderId: "REDACTED",
+  appId: "REDACTED",
+  measurementId: "REDACTED"
+};
 
 const App = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -32,6 +43,11 @@ const App = () => {
   const [timerID, setTimerID] = useState(null);
 
   useEffect(() => {
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    };
+
     fetch('https://opentdb.com/api_category.php')
       .then(response => response.json())
       .then(data => setCategories(data.trivia_categories)) 
