@@ -1,9 +1,18 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { generate } from 'project-name-generator';
+import { Link, useHistory } from 'react-router-dom';
 import { Box, Button, Heading, Text, Stack, Icon } from '@chakra-ui/react';
 import { FaUser, FaUsers } from 'react-icons/fa';
 
 const ModeSelect = ({ handleModeSelect }) => {
+  let history = useHistory();
+
+  const onMultiplayerSelect = () => {
+    const roomID = generate({ words: 3 }).dashed;
+    handleModeSelect('multiplayer', roomID);
+    history.push("/room/" + roomID);
+  }
+
   return (
     <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)"
       width={{ base: "100%" }}>
@@ -22,11 +31,10 @@ const ModeSelect = ({ handleModeSelect }) => {
               <Icon as={FaUser} />
             </Link>
           </Button>
-          <Button size="lg" colorScheme="blue" fontWeight="bold" fontSize={{ sm: "1rem", md: "1.125rem" }}>
-            <Link to="/setup" onClick={() => { handleModeSelect('multiplayer') }}>
+          <Button size="lg" colorScheme="blue" fontWeight="bold" fontSize={{ sm: "1rem", md: "1.125rem" }}
+            onClick={onMultiplayerSelect}>
               Play With Friends &nbsp;
               <Icon as={FaUsers} />
-            </Link>
           </Button>
         </Stack>
       </Box>

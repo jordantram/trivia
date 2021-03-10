@@ -1,11 +1,14 @@
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text,
+import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text, useClipboard,
          NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } 
         from '@chakra-ui/react';
 
 const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleFormSubmit }) => {
   let history = useHistory();
+
+  const roomLink = window.location.origin + "/room/" + gameSettings.roomID;
+  const { hasCopied, onCopy } = useClipboard(roomLink);
 
   const numOfQuestionsField = useRef(null);
   const warning = useRef(null);
@@ -55,7 +58,7 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
     <Flex width="full" maxHeight="50%" align="center" justifyContent="center" mt="5%" mb="5%">
       <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md" 
         width={{ base: "85%", sm: "70%", md: "55%", lg: "45%", xl: "35%", "2xl": "25%" }}>
-        <Heading size="lg" align="center">Create Game</Heading>
+        <Heading size="lg" align="center">{mode === "solo" ? "Create Game" : "Waiting Lobby"}</Heading>
         <form onSubmit={onSubmit}>
           <FormControl mt="2em">
             <FormLabel>Number of Questions (between 5 and 25):</FormLabel>
@@ -88,10 +91,15 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
               <option value="hard">Hard</option>
             </Select>
           </FormControl>
-          {mode === 'multiplayer'
+          {mode === "multiplayer"
             ? <FormControl mt="1.5em">
                 <FormLabel>Room Link (share this to invite other players):</FormLabel>
-                <Input name="roomID" value={window.location.origin + "/room/" + gameSettings.roomID} isReadOnly />
+                <Flex mb={2}>
+                  <Input name="roomID" value={roomLink} isReadOnly />
+                  <Button onClick={onCopy} ml={2}>
+                    {hasCopied ? "Copied!" : "Copy"}
+                  </Button>
+                </Flex>
               </FormControl>
             : null }
           <Text color="red.500" align="center" ref={warning}></Text>

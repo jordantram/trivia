@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase';
 import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
-import { generate } from 'project-name-generator';
 import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -60,9 +59,9 @@ const App = () => {
     console.log(questions)
   }, [questions]) */
 
-  const handleModeSelect = (mode) => {
+  const handleModeSelect = (mode, ID='') => {
     if (mode === 'multiplayer') {
-      setGameSettings({ ...gameSettings, roomID: generate({ words: 3 }).dashed })
+      setGameSettings({ ...gameSettings, roomID: ID});
     };
 
     setGameMode(mode);
@@ -147,6 +146,12 @@ const App = () => {
           <ModeSelect handleModeSelect={handleModeSelect} />
         </Route>
         <Route path="/setup">
+          {gameMode
+            ? <QuizSetup mode={gameMode} categories={categories} 
+                gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
+            : <Redirect to={{ pathName: "/" }} />}
+        </Route>
+        <Route path="/room/:id">
           {gameMode
             ? <QuizSetup mode={gameMode} categories={categories} 
                 gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
