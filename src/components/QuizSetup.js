@@ -49,11 +49,7 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
       warning.current.textContent = "Number of questions must be between 5 and 25!";
       warning.current.style.marginTop = "1.5em";
     } else {
-      if (mode === 'multiplayer') {
-        history.push("/play/" + gameSettings.roomID)
-      } else {
-        history.push("/play");
-      }
+      history.push("/play" + (mode === "multiplayer" ? ("/" + gameSettings.roomID) : ""));
       handleFormSubmit(event);
     }
   }
