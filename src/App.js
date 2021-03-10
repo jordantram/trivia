@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase';
+import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import { generate } from 'project-name-generator';
 import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -32,7 +34,7 @@ const App = () => {
     numOfQuestions: 10,
     category: undefined,
     difficulty: undefined,
-    roomCode: ''
+    roomID: ''
   });
 
   const [questions, setQuestions] = useState([]);
@@ -59,6 +61,10 @@ const App = () => {
   }, [questions]) */
 
   const handleModeSelect = (mode) => {
+    if (mode === 'multiplayer') {
+      setGameSettings({ ...gameSettings, roomID: generate({ words: 3 }).dashed })
+    };
+
     setGameMode(mode);
   };
 
@@ -105,11 +111,11 @@ const App = () => {
       setScore(score + 1);
     }
 
-    // Wait for 1.75 seconds then turn off answer reveal and increment current question count
+    // Wait for 2 seconds then turn off answer reveal and increment current question count
     setTimerID(setTimeout(() => {
       setCurrentQuestion(currentQuestion + 1);
       setRevealAnswer(false);
-    }, 1750));
+    }, 300)); // change back to 2000 after
   }
 
   const resetGame = () => {
@@ -118,7 +124,7 @@ const App = () => {
       numOfQuestions: 10,
       category: undefined,
       difficulty: undefined,
-      roomCode: ''
+      roomID: ''
     });
 
     setQuestions([]);

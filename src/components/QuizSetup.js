@@ -89,9 +89,9 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
             </Select>
           </FormControl>
           {mode === 'multiplayer'
-            ? <FormControl mt="1.5em" isRequired>
-                <FormLabel>Room Code:</FormLabel>
-                <Input placeholder="Enter a unique room name" name="roomCode" value={gameSettings.roomCode} onChange={handleChange} />
+            ? <FormControl mt="1.5em">
+                <FormLabel>Room Link (share this to invite other players):</FormLabel>
+                <Input name="roomID" value={window.location.origin + "/room/" + gameSettings.roomID} isReadOnly />
               </FormControl>
             : null }
           <Text color="red.500" align="center" ref={warning}></Text>
