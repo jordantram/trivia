@@ -17,21 +17,21 @@ const ModeSelect = ({ handleModeSelect }) => {
     <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)"
       width={{ base: "100%" }}>
       <Box maxW="2xl" mx="auto" px={{ base: '6', lg: '8' }} py={{ base: '16', sm: '20' }} textAlign="center">
-        <Heading as="h2" size="3xl" fontWeight="extrabold" letterSpacing="tight">
+        <Heading as="h2" size="4xl" fontWeight="extrabold" letterSpacing="tight">
           QuickTrivia
         </Heading>
-        <Text mt="4" fontSize="lg">
+        <Text mt="4" fontSize="xl">
           Welcome to QuickTrivia!
           How do you want to play?
         </Text>
         <Stack spacing={5} direction="row" align="center" justify="center" mt="8">
-          <Button size="lg" colorScheme="blue" fontWeight="bold" fontSize={{ sm: "1rem", md: "1.125rem" }}>
+          <Button size="lg" padding={8} colorScheme="blue" fontWeight="bold" fontSize={{ base: "1.1rem", md: "1.3rem" }}>
             <Link to="/setup" onClick={() => { handleModeSelect('solo') }}>
               Play Solo &nbsp;
               <Icon as={FaUser} />
             </Link>
           </Button>
-          <Button size="lg" colorScheme="blue" fontWeight="bold" fontSize={{ sm: "1rem", md: "1.125rem" }}
+          <Button size="lg" padding={8}colorScheme="blue" fontWeight="bold" fontSize={{ base: "1rem", sm:"1.1rem", md: "1.3rem" }}
             onClick={onMultiplayerSelect}>
               Play With Friends &nbsp;
               <Icon as={FaUsers} />
