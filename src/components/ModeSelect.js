@@ -25,13 +25,13 @@ const ModeSelect = ({ handleModeSelect }) => {
           How do you want to play?
         </Text>
         <Stack spacing={5} direction="row" align="center" justify="center" mt="8">
-          <Button size="lg" padding={8} colorScheme="blue" fontWeight="bold" fontSize={{ base: "1.1rem", md: "1.3rem" }}>
+          <Button size="lg" padding={8} colorScheme="blue" fontWeight="bold" fontSize={{ base: "1.1rem", sm: "1.1rem", md: "1.3rem" }}>
             <Link to="/setup" onClick={() => { handleModeSelect('solo') }}>
               Play Solo &nbsp;
               <Icon as={FaUser} />
             </Link>
           </Button>
-          <Button size="lg" padding={8}colorScheme="blue" fontWeight="bold" fontSize={{ base: "1rem", sm:"1.1rem", md: "1.3rem" }}
+          <Button size="lg" padding={8}colorScheme="blue" fontWeight="bold" fontSize={{ base: "1rem", sm: "1.1rem", md: "1.3rem" }}
             onClick={onMultiplayerSelect}>
               Play With Friends &nbsp;
               <Icon as={FaUsers} />
