@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import firebase from 'firebase';
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
+import "firebase/analytics";
 import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
 import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
@@ -44,10 +47,15 @@ const App = () => {
   const [timerID, setTimerID] = useState(null);
 
   useEffect(() => {
-    if (firebase.apps.length === 0) {
+    if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
       firebase.analytics();
-    };
+    }
+
+    firebase.auth().signInAnonymously()
+      .catch((error) => {
+        alert("Failed to access server.");
+      });
 
     fetch('https://opentdb.com/api_category.php')
       .then(response => response.json())
@@ -62,7 +70,7 @@ const App = () => {
   const handleModeSelect = (mode, ID='') => {
     if (mode === 'multiplayer') {
       setGameSettings({ ...gameSettings, roomID: ID});
-    };
+    }
 
     setGameMode(mode);
   };
