@@ -3,7 +3,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import "firebase/analytics";
-import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import { uniqueNamesGenerator, colors, animals } from 'unique-names-generator';
 import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -45,6 +45,7 @@ const App = () => {
   const [revealAnswer, setRevealAnswer] = useState(false);
 
   const [timerID, setTimerID] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     if (!firebase.apps.length) {
@@ -52,15 +53,39 @@ const App = () => {
       firebase.analytics();
     }
 
-    firebase.auth().signInAnonymously()
-      .catch((error) => {
-        alert("Failed to access server.");
-      });
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        if (user.isAnonymous && !user.displayName) {
+          user.updateProfile({
+            displayName: "Anonymous " + uniqueNamesGenerator({
+              dictionaries: [colors, animals],
+              length: 2,
+              separator: " ",
+              style: "capital"
+            })
+          })
+        }
+
+        setCurrentUser({ ...user });
+      } else {
+        firebase.auth().signInAnonymously()
+          .catch((error) => {
+            alert("Failed to access server.");
+          });
+      }
+    });
 
     fetch('https://opentdb.com/api_category.php')
       .then(response => response.json())
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
+
+  // Grabbing current authenticated user info
+  useEffect(() => {
+    if (currentUser) {
+      console.log(currentUser.displayName);
+    }
+  }, [currentUser]);
 
   /* To test fetching of questions from OpenTrivia DB
   useEffect(() => {
