@@ -16,6 +16,7 @@ import Question from './components/Question';
 import Answer from './components/Answer';
 import Score from './components/Score';
 import GameSummary from './components/GameSummary';
+import PlayerList from './components/PlayerList';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -186,8 +187,11 @@ const App = () => {
         </Route>
         <Route path="/room/:id">
           {gameMode
-            ? <QuizSetup mode={gameMode} categories={categories} 
-                gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
+            ? <Flex>
+                <QuizSetup mode={gameMode} categories={categories} 
+                  gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
+                <PlayerList />
+              </Flex>
             : <Redirect to={{ pathName: "/" }} />}
         </Route>
         <Route path="/play">
