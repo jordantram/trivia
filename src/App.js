@@ -25,7 +25,8 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+  databaseURL: process.env.REACT_APP_DATABASE_URL
 };
 
 const App = () => {
@@ -81,12 +82,20 @@ const App = () => {
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
 
-  // Grabbing current authenticated user info
+  useEffect(() => {
+    if (currentUser) {
+      firebase.database().ref('users/' + currentUser.uid).set({
+        displayName: currentUser.displayName
+      })
+    }
+  }, [currentUser]);
+
+  /* Grabbing current authenticated user info
   useEffect(() => {
     if (currentUser) {
       console.log(currentUser.displayName);
     }
-  }, [currentUser]);
+  }, [currentUser]); */
 
   /* To test fetching of questions from OpenTrivia DB
   useEffect(() => {
