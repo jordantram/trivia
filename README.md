@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# QuickTrivia
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Trivia game built using React, React-Router, Firebase, Chakra-UI, and OpenTDB's Trivia API. Features the ability to play alone or share a private link to play against friends.
 
 ## Available Scripts
 
