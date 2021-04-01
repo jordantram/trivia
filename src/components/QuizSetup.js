@@ -1,17 +1,27 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
+import firebase from '../firebase';
 import { useHistory } from 'react-router-dom';
 import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text, useClipboard,
          NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } 
         from '@chakra-ui/react';
 
-const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleFormSubmit }) => {
+const QuizSetup = ({ match, mode, categories, multiplayer, user, gameSettings, setGameSettings, handleFormSubmit }) => {
   let history = useHistory();
+  const roomID = match ? match.params.id : '';
 
   const roomLink = window.location.origin + "/room/" + gameSettings.roomID;
   const { hasCopied, onCopy } = useClipboard(roomLink);
 
   const numOfQuestionsField = useRef(null);
   const warning = useRef(null);
+
+  useEffect(() => {
+    if (user && roomID) {
+      firebase.database().ref(`games/${roomID}/players/${user.uid}`).set({
+        role: 'player'
+      })
+    }
+  }, [user, roomID]);
 
   const categorySelections = categories.map(category => {
     return (
@@ -91,7 +101,7 @@ const QuizSetup = ({ mode, categories, gameSettings, setGameSettings, handleForm
               <option value="hard">Hard</option>
             </Select>
           </FormControl>
-          {mode === "multiplayer"
+          {multiplayer
             ? <FormControl mt="1.5em">
                 <FormLabel>Room Link (share this to invite other players):</FormLabel>
                 <Flex mb={2}>

@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/database";
-import "firebase/analytics";
+import firebase from './firebase';
 import { uniqueNamesGenerator, colors, animals } from 'unique-names-generator';
 import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
@@ -17,17 +14,6 @@ import Answer from './components/Answer';
 import Score from './components/Score';
 import GameSummary from './components/GameSummary';
 import PlayerList from './components/PlayerList';
-
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
-  databaseURL: process.env.REACT_APP_DATABASE_URL
-};
 
 const App = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -50,11 +36,6 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-      firebase.analytics();
-    }
-
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         if (user.isAnonymous && !user.displayName) {
@@ -65,30 +46,35 @@ const App = () => {
               separator: " ",
               style: "capital"
             })
+          }).then(() => {
+            setCurrentUser({ ...user });
           })
+        } else {
+          setCurrentUser({ ...user });
         }
-
-        setCurrentUser({ ...user });
       } else {
+        setCurrentUser(null);
+
         firebase.auth().signInAnonymously()
           .catch((error) => {
             alert("Failed to access server.");
           });
-      }
-    });
+      } 
+    }); 
 
     fetch('https://opentdb.com/api_category.php')
       .then(response => response.json())
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
-
+  
+  
   useEffect(() => {
     if (currentUser) {
       firebase.database().ref('users/' + currentUser.uid).set({
         displayName: currentUser.displayName
       })
-    }
-  }, [currentUser]);
+    } 
+  }, [currentUser]); 
 
   /* Grabbing current authenticated user info
   useEffect(() => {
@@ -103,7 +89,7 @@ const App = () => {
   }, [questions]) */
 
   const handleModeSelect = (mode, ID='') => {
-    if (mode === 'multiplayer') {
+    if (mode === "multiplayer") {
       setGameSettings({ ...gameSettings, roomID: ID});
     }
 
@@ -157,7 +143,7 @@ const App = () => {
     setTimerID(setTimeout(() => {
       setCurrentQuestion(currentQuestion + 1);
       setRevealAnswer(false);
-    }, 300)); // change back to 2000 after
+    }, 2000));
   }
 
   const resetGame = () => {
@@ -189,19 +175,16 @@ const App = () => {
           <ModeSelect handleModeSelect={handleModeSelect} />
         </Route>
         <Route path="/setup">
-          {gameMode
-            ? <QuizSetup mode={gameMode} categories={categories} 
-                gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
-            : <Redirect to={{ pathName: "/" }} />}
+          <QuizSetup match='' mode={gameMode} categories={categories} multiplayer={false} user={currentUser}
+            gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
         </Route>
-        <Route path="/room/:id">
-          {gameMode
-            ? <Flex>
-                <QuizSetup mode={gameMode} categories={categories} 
-                  gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
-                <PlayerList />
-              </Flex>
-            : <Redirect to={{ pathName: "/" }} />}
+        <Route path="/room/:id"
+          render={({match}) => 
+            <Flex>
+              <QuizSetup match={match} mode={gameMode} categories={categories} multiplayer={true} user={currentUser}
+                gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
+              <PlayerList />
+            </Flex>}>
         </Route>
         <Route path="/play">
           { currentQuestion !== null
