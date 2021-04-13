@@ -22,8 +22,7 @@ const App = () => {
   const [gameSettings, setGameSettings] = useState({
     numOfQuestions: 10,
     category: undefined,
-    difficulty: undefined,
-    roomID: ''
+    difficulty: undefined
   });
 
   const [questions, setQuestions] = useState([]);
@@ -61,7 +60,7 @@ const App = () => {
       } 
     }); 
 
-    fetch('https://opentdb.com/api_category.php')
+    fetch("https://opentdb.com/api_category.php")
       .then(response => response.json())
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
@@ -69,7 +68,7 @@ const App = () => {
   
   useEffect(() => {
     if (currentUser) {
-      firebase.database().ref('users/' + currentUser.uid).set({
+      firebase.database().ref("users/" + currentUser.uid).set({
         displayName: currentUser.displayName
       })
     } 
@@ -87,11 +86,10 @@ const App = () => {
     console.log(questions)
   }, [questions]) */
 
-  const handleModeSelect = (mode, ID='') => {
+  const handleModeSelect = (mode, ID="") => {
     if (mode === "multiplayer") {
-      setGameSettings({ ...gameSettings, roomID: ID});
       firebase.database().ref(`games/${ID}/players/${currentUser.uid}`).set({
-        role: 'host'
+        role: "host"
       });
     }
   };
@@ -150,8 +148,7 @@ const App = () => {
     setGameSettings({
       numOfQuestions: 10,
       category: undefined,
-      difficulty: undefined,
-      roomID: ''
+      difficulty: undefined
     });
 
     setQuestions([]);

@@ -13,7 +13,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
 
   /* Below variables are used only for multiplayer game rooms */
   const [game, setGame] = useState(null); // grabs game info/settings from Firebase RTDB
-  const [loading, setLoading] = useState(true); // need a loading screen while we asynchronously get info from RTDB
+  const [loading, setLoading] = useState(true); // loading screen while we asynchronously get info from RTDB
   const roomID = match ? match.params.id : '';
   const roomLink = window.location.origin + "/room/" + roomID;
   const { hasCopied, onCopy } = useClipboard(roomLink);
