@@ -15,7 +15,10 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
   const numOfQuestionsField = useRef(null);
   const warning = useRef(null);
 
+  /* used to grab game settings from Firebase RTDB if game is multiplayer game (singleplayer game settings are saved
+    in local state variables) */
   const [game, setGame] = useState(null);
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
