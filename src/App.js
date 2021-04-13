@@ -18,7 +18,6 @@ import PlayerList from './components/PlayerList';
 const App = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const [gameMode, setGameMode] = useState('');
   const [categories, setCategories] = useState([]);
   const [gameSettings, setGameSettings] = useState({
     numOfQuestions: 10,
@@ -91,9 +90,10 @@ const App = () => {
   const handleModeSelect = (mode, ID='') => {
     if (mode === "multiplayer") {
       setGameSettings({ ...gameSettings, roomID: ID});
+      firebase.database().ref(`games/${ID}/players/${currentUser.uid}`).set({
+        role: 'host'
+      });
     }
-
-    setGameMode(mode);
   };
 
   const handleFormSubmit = (event) => {
@@ -147,7 +147,6 @@ const App = () => {
   }
 
   const resetGame = () => {
-    setGameMode('');
     setGameSettings({
       numOfQuestions: 10,
       category: undefined,
@@ -175,13 +174,13 @@ const App = () => {
           <ModeSelect handleModeSelect={handleModeSelect} />
         </Route>
         <Route path="/setup">
-          <QuizSetup match='' mode={gameMode} categories={categories} multiplayer={false} user={currentUser}
+          <QuizSetup match='' categories={categories} multiplayer={false} user={currentUser}
             gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
         </Route>
         <Route path="/room/:id"
           render={({match}) => 
             <Flex>
-              <QuizSetup match={match} mode={gameMode} categories={categories} multiplayer={true} user={currentUser}
+              <QuizSetup match={match} categories={categories} multiplayer={true} user={currentUser}
                 gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
               <PlayerList />
             </Flex>}>

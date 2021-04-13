@@ -1,27 +1,59 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import firebase from '../firebase';
 import { useHistory } from 'react-router-dom';
 import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text, useClipboard,
          NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } 
         from '@chakra-ui/react';
 
-const QuizSetup = ({ match, mode, categories, multiplayer, user, gameSettings, setGameSettings, handleFormSubmit }) => {
+const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGameSettings, handleFormSubmit }) => {
   let history = useHistory();
   const roomID = match ? match.params.id : '';
 
-  const roomLink = window.location.origin + "/room/" + gameSettings.roomID;
+  const roomLink = window.location.origin + "/room/" + roomID;
   const { hasCopied, onCopy } = useClipboard(roomLink);
 
   const numOfQuestionsField = useRef(null);
   const warning = useRef(null);
 
+  const [game, setGame] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (user && roomID) {
-      firebase.database().ref(`games/${roomID}/players/${user.uid}`).set({
-        role: 'player'
-      })
-    }
-  }, [user, roomID]);
+    let isMounted = true;
+    const gamesRef = firebase.database().ref(`games/${roomID}`);
+
+    gamesRef.once("value", snapshot => {
+      if (snapshot.exists()) {
+        const val = snapshot.val();
+
+        if (isMounted) {
+          setGame(val);
+        }
+
+        if (user && roomID) {
+          if (!(user.uid in val.players)) {
+            gamesRef.child("players").child(user.uid).set({
+              role: "player"
+            })
+          }
+        }
+      }
+
+      if (isMounted) {
+        setLoading(false);
+      }
+    })
+
+    return () => { isMounted = false };
+  }, [user, roomID]); 
+
+  if (loading) {
+    return <Flex>Loading</Flex>;
+  }
+
+  if (!game) {
+    return <Flex>Room does not exist!</Flex>;
+  }
 
   const categorySelections = categories.map(category => {
     return (
@@ -59,7 +91,7 @@ const QuizSetup = ({ match, mode, categories, multiplayer, user, gameSettings, s
       warning.current.textContent = "Number of questions must be between 5 and 25!";
       warning.current.style.marginTop = "1.5em";
     } else {
-      history.push("/play" + (mode === "multiplayer" ? ("/" + gameSettings.roomID) : ""));
+      history.push("/play" + (multiplayer ? ("/" + gameSettings.roomID) : ""));
       handleFormSubmit(event);
     }
   }
@@ -68,7 +100,7 @@ const QuizSetup = ({ match, mode, categories, multiplayer, user, gameSettings, s
     <Flex width="full" maxHeight="50%" align="center" justifyContent="center" mt="5%" mb="5%">
       <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md" 
         width={{ base: "85%", sm: "70%", md: "55%", lg: "45%", xl: "35%", "2xl": "25%" }}>
-        <Heading size="lg" align="center">{mode === "solo" ? "Create Game" : "Waiting Lobby"}</Heading>
+        <Heading size="lg" align="center">{multiplayer ? "Waiting Lobby" : "Create Game"}</Heading>
         <form onSubmit={onSubmit}>
           <FormControl mt="2em">
             <FormLabel>Number of Questions (between 5 and 25):</FormLabel>
