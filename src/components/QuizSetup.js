@@ -7,19 +7,16 @@ import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text
 
 const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGameSettings, handleFormSubmit }) => {
   let history = useHistory();
-  const roomID = match ? match.params.id : '';
 
-  const roomLink = window.location.origin + "/room/" + roomID;
-  const { hasCopied, onCopy } = useClipboard(roomLink);
-
+  const [loading, setLoading] = useState(true);
   const numOfQuestionsField = useRef(null);
   const warning = useRef(null);
 
-  /* used to grab game settings from Firebase RTDB if game is multiplayer game (singleplayer game settings are saved
-    in local state variables) */
-  const [game, setGame] = useState(null);
-  
-  const [loading, setLoading] = useState(true);
+  /* Below variables are used only for multiplayer game rooms */
+  const [game, setGame] = useState(null); // grabs game info/settings from Firebase RTDB
+  const roomID = match ? match.params.id : '';
+  const roomLink = window.location.origin + "/room/" + roomID;
+  const { hasCopied, onCopy } = useClipboard(roomLink);
 
   useEffect(() => {
     let isMounted = true;
