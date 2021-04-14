@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import firebase from '../firebase';
 import { useHistory } from 'react-router-dom';
-import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text, useClipboard,
-         NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } 
+import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text, useClipboard, Spinner,
+         NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper,
+         AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } 
         from '@chakra-ui/react';
 
 const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGameSettings, handleFormSubmit }) => {
@@ -47,14 +48,6 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
     return () => { isMounted = false };
   }, [user, roomID]); 
 
-  if (loading) {
-    return <Flex>Loading</Flex>;
-  }
-
-  if (!game) {
-    return <Flex>Room does not exist!</Flex>;
-  }
-
   const categorySelections = categories.map(category => {
     return (
       <option key={category.id} value={category.id}>{category.name}</option>
@@ -94,6 +87,48 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
       history.push("/play" + (multiplayer ? ("/" + gameSettings.roomID) : ""));
       handleFormSubmit(event);
     }
+  }
+
+  if (multiplayer && loading) {
+    return (
+      <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)"
+        width={{ base: "100%" }}>
+          <Box maxW="2xl" mx="auto" px={{ base: "6", lg: "8" }} py={{ base: "16", sm: "20" }} textAlign="center">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />
+          </Box>
+      </Box>
+    );
+  }
+
+  if (multiplayer && !game) {
+    return (
+      <AlertDialog
+        isOpen={true}>
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Oops!
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                The room you are trying to enter doesn't exist.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button onClick={() => { history.push("/"); }}>
+                  Go Home
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+      </AlertDialog>
+    );
   }
 
   return (

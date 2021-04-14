@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebase from './firebase';
 import { uniqueNamesGenerator, colors, animals } from 'unique-names-generator';
-import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton } from '@chakra-ui/react';
+import { Grid, GridItem, SimpleGrid, Text, useColorMode, Flex, IconButton, Spinner, Box } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { decode } from 'html-entities';
@@ -32,6 +32,8 @@ const App = () => {
 
   const [timerID, setTimerID] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
@@ -65,12 +67,13 @@ const App = () => {
       .then(data => setCategories(data.trivia_categories)) 
   }, []); // runs only once on initial render
   
-  
   useEffect(() => {
     if (currentUser) {
       firebase.database().ref("users/" + currentUser.uid).set({
         displayName: currentUser.displayName
       })
+
+      setLoading(false);
     } 
   }, [currentUser]); 
 
@@ -88,9 +91,11 @@ const App = () => {
 
   const handleModeSelect = (mode, ID="") => {
     if (mode === "multiplayer") {
-      firebase.database().ref(`games/${ID}/players/${currentUser.uid}`).set({
-        role: "host"
-      });
+      if (currentUser) {
+        firebase.database().ref(`games/${ID}/players/${currentUser.uid}`).set({
+          role: "host"
+        });
+      }
     }
   };
 
@@ -114,8 +119,8 @@ const App = () => {
 
     // Fetch questions/answers from OpenTrivia DB
     fetch(`https://opentdb.com/api.php?amount=${numOfQuestions}` +
-           `&category=${category ? category : ''}` +
-           `&difficulty=${difficulty ? difficulty : ''}` + 
+           `&category=${category ? category : ""}` +
+           `&difficulty=${difficulty ? difficulty : ""}` + 
            `&type=multiple`)
       .then(response => response.json())
       .then(data => { 
@@ -159,12 +164,29 @@ const App = () => {
     setTimerID(null);
   }
 
+  if (loading) {
+    return (
+      <Box as="section" position="fixed" top="35%" left="50%" transform="translate(-50%, -50%)"
+        width={{ base: "100%" }}>
+          <Box maxW="2xl" mx="auto" px={{ base: "6", lg: "8" }} py={{ base: "16", sm: "20" }} textAlign="center">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />
+          </Box>
+      </Box>
+    );
+  }
+
   return (
     <Router>
       <IconButton onClick={toggleColorMode} 
         size="lg"
         aria-label="Toggle color mode" 
-        icon={colorMode === 'light'? <MoonIcon /> : <SunIcon />}
+        icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
         position="fixed" bottom="1em" right="1em" />
       <Switch>
         <Route exact path="/">
