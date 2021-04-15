@@ -19,13 +19,11 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
   const roomLink = window.location.origin + "/room/" + roomID;
   const { hasCopied, onCopy } = useClipboard(roomLink);
 
-  const gameSettingsRef = firebase.database().ref(`games/${roomID}/settings`);
-
   useEffect(() => {
     let isMounted = true;
     const gamesRef = firebase.database().ref(`games/${roomID}`);
 
-    gamesRef.once("value", snapshot => {
+    gamesRef.on("value", snapshot => {
       if (snapshot.exists()) {
         const val = snapshot.val();
 
@@ -155,7 +153,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
             <FormLabel>Number of Questions (between 5 and 25):</FormLabel>
             <NumberInput defaultValue={10} 
               min={5} max={25} name="numOfQuestions" 
-              value={multiplayer ? gameSettingsRef.numOfQuestions : gameSettings.numOfQuestions} 
+              value={multiplayer ? game.settings.numOfQuestions : gameSettings.numOfQuestions} 
               clampValueOnBlur={false}
               onChange={handleChange} 
               onKeyPress={event => {
@@ -173,7 +171,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
           <FormControl mt="1.5em">
             <FormLabel>Select Category:</FormLabel>
             <Select placeholder="Any Category" name="category" 
-              value={multiplayer ? gameSettingsRef.category : gameSettings.category} 
+              value={multiplayer ? game.settings.category : gameSettings.category} 
               onChange={handleChange}>
               {categorySelections}
             </Select>
@@ -181,7 +179,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
           <FormControl mt="1.5em">
             <FormLabel>Select Difficulty:</FormLabel>
             <Select placeholder="Any Difficulty" name="difficulty" 
-              value={multiplayer ? gameSettingsRef.difficulty : gameSettings.difficulty} 
+              value={multiplayer ? game.settings.difficulty : gameSettings.difficulty} 
               onChange={handleChange}>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
