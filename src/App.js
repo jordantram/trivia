@@ -95,6 +95,12 @@ const App = () => {
         firebase.database().ref(`games/${ID}/players/${currentUser.uid}`).set({
           role: "host"
         });
+
+        firebase.database().ref(`games/${ID}/settings`).set({
+          numOfQuestions: 10,
+          category: "",
+          difficulty: ""
+        });
       }
     }
   };

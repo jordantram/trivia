@@ -15,9 +15,11 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
   /* Below variables are used only for multiplayer game rooms */
   const [game, setGame] = useState(null); // grabs game info/settings from Firebase RTDB
   const [loading, setLoading] = useState(true); // loading screen while we asynchronously get info from RTDB
-  const roomID = match ? match.params.id : '';
+  const roomID = match ? match.params.id : "";
   const roomLink = window.location.origin + "/room/" + roomID;
   const { hasCopied, onCopy } = useClipboard(roomLink);
+
+  const gameSettingsRef = firebase.database().ref(`games/${roomID}/settings`);
 
   useEffect(() => {
     let isMounted = true;
@@ -63,16 +65,28 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
         warning.current.textContent = "";
       }
 
-      setGameSettings({
-        ...gameSettings,
-        numOfQuestions: event
-      });
+      if (multiplayer) {
+        const updates = {};
+        updates[`/settings/numOfQuestions`] = parseInt(event);
+        firebase.database().ref(`games/${roomID}`).update(updates);
+      } else {
+        setGameSettings({
+          ...gameSettings,
+          numOfQuestions: event
+        });
+      }
     } else {
       // normal case where component should return event
-      setGameSettings({
-        ...gameSettings,
-        [event.target.name]: event.target.value
-      });
+      if (multiplayer) {
+        const updates = {};
+        updates[`/settings/${event.target.name}`] = event.target.value;
+        firebase.database().ref(`games/${roomID}`).update(updates);
+      } else {
+        setGameSettings({
+          ...gameSettings,
+          [event.target.name]: event.target.value
+        });
+      }
     }
   }
 
@@ -139,11 +153,13 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
         <form onSubmit={onSubmit}>
           <FormControl mt="2em">
             <FormLabel>Number of Questions (between 5 and 25):</FormLabel>
-            <NumberInput defaultValue={10} min={5} max={25} name="numOfQuestions" value={gameSettings.numOfQuestions} 
+            <NumberInput defaultValue={10} 
+              min={5} max={25} name="numOfQuestions" 
+              value={multiplayer ? gameSettingsRef.numOfQuestions : gameSettings.numOfQuestions} 
               clampValueOnBlur={false}
               onChange={handleChange} 
               onKeyPress={event => {
-                if (event.key === 'Enter') {
+                if (event.key === "Enter") {
                   event.preventDefault();
                 }
               }}>
@@ -156,16 +172,20 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
           </FormControl>
           <FormControl mt="1.5em">
             <FormLabel>Select Category:</FormLabel>
-            <Select placeholder="Any Category" name="category" value={gameSettings.category} onChange={handleChange}>
+            <Select placeholder="Any Category" name="category" 
+              value={multiplayer ? gameSettingsRef.category : gameSettings.category} 
+              onChange={handleChange}>
               {categorySelections}
             </Select>
           </FormControl>
           <FormControl mt="1.5em">
             <FormLabel>Select Difficulty:</FormLabel>
-            <Select placeholder="Any Difficulty" name="difficulty" value={gameSettings.difficulty} onChange={handleChange}>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
+            <Select placeholder="Any Difficulty" name="difficulty" 
+              value={multiplayer ? gameSettingsRef.difficulty : gameSettings.difficulty} 
+              onChange={handleChange}>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
             </Select>
           </FormControl>
           {multiplayer
