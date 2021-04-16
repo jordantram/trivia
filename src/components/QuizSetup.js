@@ -156,6 +156,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
               value={multiplayer ? game.settings.numOfQuestions : gameSettings.numOfQuestions} 
               clampValueOnBlur={false}
               onChange={handleChange} 
+              isDisabled={game.players[user.uid].role === "player" ? true : false}
               onKeyPress={event => {
                 if (event.key === "Enter") {
                   event.preventDefault();
@@ -172,7 +173,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
             <FormLabel>Select Category:</FormLabel>
             <Select placeholder="Any Category" name="category" 
               value={multiplayer ? game.settings.category : gameSettings.category} 
-              onChange={handleChange}>
+              onChange={handleChange} isDisabled={game.players[user.uid].role === "player" ? true : false}>
               {categorySelections}
             </Select>
           </FormControl>
@@ -180,7 +181,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
             <FormLabel>Select Difficulty:</FormLabel>
             <Select placeholder="Any Difficulty" name="difficulty" 
               value={multiplayer ? game.settings.difficulty : gameSettings.difficulty} 
-              onChange={handleChange}>
+              onChange={handleChange} isDisabled={game.players[user.uid].role === "player" ? true : false}>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
@@ -198,7 +199,9 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
               </FormControl>
             : null }
           <Text color="red.500" align="center" ref={warning}></Text>
-          <Button type="submit" size="md" colorScheme="blue" fontWeight="bold" fontSize="1.25em" mt="1.5em" width="full" pt="1.25em" pb="1.25em">
+          <Button type="submit" size="md" colorScheme="blue" fontWeight="bold" fontSize="1.25em"
+            mt="1.5em" width="full" pt="1.25em" pb="1.25em"
+            isDisabled={game.players[user.uid].role === "player" ? true : false}>
             Start!
           </Button>
         </form>
