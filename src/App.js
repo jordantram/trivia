@@ -204,11 +204,8 @@ const App = () => {
         </Route>
         <Route path="/room/:id"
           render={({match}) => 
-            <Flex>
-              <QuizSetup match={match} categories={categories} multiplayer={true} user={currentUser}
-                gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />
-              <PlayerList />
-            </Flex>}>
+            <QuizSetup match={match} categories={categories} multiplayer={true} user={currentUser}
+              gameSettings={gameSettings} setGameSettings={setGameSettings} handleFormSubmit={handleFormSubmit} />}>
         </Route>
         <Route path="/play">
           { currentQuestion !== null

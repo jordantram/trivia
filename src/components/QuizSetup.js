@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import firebase from '../firebase';
+import PlayerList from './PlayerList';
 import { useHistory } from 'react-router-dom';
 import { Box, Flex, Heading, Select, FormControl, FormLabel, Button, Input, Text, useClipboard, Spinner,
          NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper,
@@ -145,7 +146,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
 
   return (
     <Flex width="full" maxHeight="50%" align="center" justifyContent="center" mt="5%" mb="5%">
-      <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md" 
+      <Box p={8} borderWidth="1px" borderRadius="md" boxShadow="md"
         width={{ base: "85%", sm: "70%", md: "55%", lg: "45%", xl: "35%", "2xl": "25%" }}>
         <Heading size="lg" align="center">{multiplayer ? "Waiting Lobby" : "Create Game"}</Heading>
         <form onSubmit={onSubmit}>
@@ -156,7 +157,7 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
               value={multiplayer ? game.settings.numOfQuestions : gameSettings.numOfQuestions} 
               clampValueOnBlur={false}
               onChange={handleChange} 
-              isDisabled={game.players[user.uid].role === "player" ? true : false}
+              isDisabled={multiplayer ? (game.players[user.uid].role === "player" ? true : false) : false}
               onKeyPress={event => {
                 if (event.key === "Enter") {
                   event.preventDefault();
@@ -173,7 +174,8 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
             <FormLabel>Select Category:</FormLabel>
             <Select placeholder="Any Category" name="category" 
               value={multiplayer ? game.settings.category : gameSettings.category} 
-              onChange={handleChange} isDisabled={game.players[user.uid].role === "player" ? true : false}>
+              isDisabled={multiplayer ? (game.players[user.uid].role === "player" ? true : false) : false}
+              onChange={handleChange}>
               {categorySelections}
             </Select>
           </FormControl>
@@ -181,7 +183,8 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
             <FormLabel>Select Difficulty:</FormLabel>
             <Select placeholder="Any Difficulty" name="difficulty" 
               value={multiplayer ? game.settings.difficulty : gameSettings.difficulty} 
-              onChange={handleChange} isDisabled={game.players[user.uid].role === "player" ? true : false}>
+              isDisabled={multiplayer ? (game.players[user.uid].role === "player" ? true : false) : false}
+              onChange={handleChange}>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
@@ -201,10 +204,13 @@ const QuizSetup = ({ match, categories, multiplayer, user, gameSettings, setGame
           <Text color="red.500" align="center" ref={warning}></Text>
           <Button type="submit" size="md" colorScheme="blue" fontWeight="bold" fontSize="1.25em"
             mt="1.5em" width="full" pt="1.25em" pb="1.25em"
-            isDisabled={game.players[user.uid].role === "player" ? true : false}>
+            isDisabled={multiplayer ? (game.players[user.uid].role === "player" ? true : false) : false}>
             Start!
           </Button>
         </form>
+        {multiplayer
+          ? <PlayerList />
+          : null}
       </Box>
     </Flex>
   );
